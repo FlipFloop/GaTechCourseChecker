@@ -1,0 +1,8 @@
+.DS_Store
+src-tauri/Cargo.lock
+yarn.lock
+
+target
+
+node_modules
+dist
