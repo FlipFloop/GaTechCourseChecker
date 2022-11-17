@@ -1,17 +1,16 @@
 import { createSignal } from "solid-js";
+import { createStore } from "solid-js/store";
 import { invoke } from "@tauri-apps/api/tauri";
 import { open } from "@tauri-apps/api/shell";
-import "./App.css";
+import "./App.scss";
 
 import toast, { Toaster } from "solid-toast";
 
 const showSuccess = () => toast.success("Retrieved!");
 
 const App = () => {
-  
   const [courses, setCourses] = createSignal([21135, 25587, 27395, 24649]);
   const [data, setData] = createSignal("");
-  
 
   const getData = async () => {
     setData("Loading");
