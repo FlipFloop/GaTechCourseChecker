@@ -1,16 +1,73 @@
-import { createSignal } from "solid-js";
+import { createSignal, For } from "solid-js";
 import { createStore } from "solid-js/store";
 import { invoke } from "@tauri-apps/api/tauri";
-import { open } from "@tauri-apps/api/shell";
-import "./App.scss";
-
 import toast, { Toaster } from "solid-toast";
 
-const showSuccess = () => toast.success("Retrieved!");
+import "./App.scss";
+
+import { Course, openLink, courseMAX, courseMIN } from "./utils";
+import { courseTag } from "./components/courseTag";
+
+const [courses, setCourses] = createStore<Course[]>([
+  {
+    id: 1,
+    courseNum: 21135,
+    seatAvailable: false,
+    waitlistAvailable: false,
+  },
+  {
+    id: 2,
+    courseNum: 25587,
+    seatAvailable: false,
+    waitlistAvailable: false,
+  },
+  {
+    id: 3,
+    courseNum: 27395,
+    seatAvailable: false,
+    waitlistAvailable: false,
+  },
+  {
+    id: 4,
+    courseNum: 24649,
+    seatAvailable: false,
+    waitlistAvailable: false,
+  },
+]);
+
+const [newCourse, setNewCourse] = createSignal(0);
+
+const addCourse = () => {
+  let valid = true;
+
+  if (newCourse() > courseMAX || newCourse() < courseMIN) {
+    toast.error("Course value not in range");
+    return;
+  }
+
+  courses.some((course: any) => {
+    if (course.courseNum == newCourse()) {
+      console.log("hit");
+      valid = false;
+    }
+    console.log("hi");
+  });
+
+  if (valid) {
+    setCourses([
+      ...courses,
+      {
+        id: courses[courses.length - 1].id + 1,
+        courseNum: newCourse(),
+        seatAvailable: false,
+        waitlistAvailable: false,
+      },
+    ]);
+  }
+};
 
 const App = () => {
-  const [courses, setCourses] = createSignal([21135, 25587, 27395, 24649]);
-  const [data, setData] = createSignal("");
+  const [data, setData] = createSignal("No data fetched!");
 
   const getData = async () => {
     setData("Loading");
@@ -18,38 +75,66 @@ const App = () => {
     setData(await invoke("get_courses"));
 
     toast.remove();
-    showSuccess();
-  };
-
-  const openLink = async () => {
-    open(
-      "https://oscar.gatech.edu/bprod/twbkwbis.P_GenMenu?name=bmenu.P_RegMnu"
-    );
+    toast.success("Retrieved!");
   };
 
   return (
     <div class="container">
       <Toaster />
       <h1>Georgia Tech self-coursicle!</h1>
-      <h4>{courses().join(", ")}</h4>
+      <For each={courses}>
+        {(course: Course) => (
+          <div>
+            <input
+              value={course.courseNum}
+              min={courseMIN}
+              max={courseMAX}
+              type="number"
+              onChange={(e) => {
+                const value: number = e.target.value as number;
+
+                if (value < courseMAX && value > courseMIN) {
+                  console.log("hi");
+                  const idx = courses.findIndex(
+                    (el: Course) => el.id === course.id
+                  );
+                  setCourses(idx, { courseNum: e.target.value as number });
+                }
+
+              }}
+            />
+            <button
+              onClick={() =>
+                setCourses(courses.filter((el: any) => el.id !== course.id))
+              }
+            >
+              &#10060
+            </button>
+          </div>
+        )}
+      </For>
+      <hr />
       <div class="row">
-        <div>
-          {/* <input
-            id="course-num-input"
-            onChange={(e) => setCourses([e.target.value])}
-            placeholder="432432"
-            type="number"
-            use:model={[courses, setCourses]}
-          /> */}
-          <button type="button" onClick={getData}>
-            Get Course Data
-          </button>
-        </div>
+        <input
+          id="course-num-input"
+          value={newCourse()}
+          onChange={(e) => setNewCourse(e.target.value as number)}
+          placeholder=""
+          type="number"
+          min={courseMIN}
+          max={courseMAX}
+        />
+        <button onClick={addCourse}>&#10133 Add Course</button>
       </div>
+      <button type="button" onClick={getData}>
+        Get Course Data
+      </button>
 
       <h2>{data()}</h2>
 
-      <button onClick={openLink}>Go register!</button>
+      <button type="button" onClick={openLink}>
+        Go register!
+      </button>
     </div>
   );
 };

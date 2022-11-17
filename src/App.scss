@@ -1,7 +1,14 @@
-.logo.vite:hover {
-  filter: drop-shadow(0 0 2em #747bff);
+.container {
+  margin: 0;
+  padding-top: 10vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
 }
 
-.logo.solid:hover {
-  filter: drop-shadow(0 0 2em #2f5d90);
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
