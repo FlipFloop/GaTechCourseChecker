@@ -23,12 +23,6 @@ fn get_courses(courses: String) -> String {
 
     // course num, course full remain, waitlist full
     let mut course_nums: Vec<(u16, bool, bool)> = vec![];
-    // let mut course_nums: Vec<(u16, bool, bool)> = vec![
-    //     (21135, true, true),
-    //     (25587, true, true),
-    //     (27395, true, true),
-    //     (24649, true, true),
-    // ];
 
     let parsed_course_nums: Vec<u16> = courses
         .split(' ')
