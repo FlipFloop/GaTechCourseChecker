@@ -17,14 +17,11 @@ export const checkCourseExists = async (courseNumber: number) => {
     courseId: courseNumber,
   });
 
-  console.log(exists);
-
   return exists;
 };
 
 export const get_courses = async (courseArr: number[]) => {
   const data = await invoke("get_courses", { courses: courseArr.join(" ") });
-  // const data = await invoke("get_courses", { courses: courseArr.join(" ").toString() });
   return data as string;
 };
 

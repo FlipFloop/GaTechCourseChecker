@@ -101,7 +101,6 @@ const App = () => {
                 const value: number = e.target.value as number;
 
                 if (value < courseMAX && value > courseMIN) {
-                  console.log("hi");
                   const idx = courses.findIndex(
                     (el: Course) => el.id === course.id
                   );
