@@ -16,16 +16,35 @@ struct Course {
 }
 
 #[tauri::command]
-fn get_courses() -> String {
+fn get_courses(courses: String) -> String {
+    // fn get_courses() -> String {
+    println!("Courses searched: {}", courses);
     let mut free_courses: Vec<Vec<u16>> = vec![vec![], vec![]];
 
     // course num, course full remain, waitlist full
-    let mut course_nums: [(u16, bool, bool); 4] = [
-        (21135, true, true),
-        (25587, true, true),
-        (27395, true, true),
-        (24649, true, true),
-    ];
+    let mut course_nums: Vec<(u16, bool, bool)> = vec![];
+    // let mut course_nums: Vec<(u16, bool, bool)> = vec![
+    //     (21135, true, true),
+    //     (25587, true, true),
+    //     (27395, true, true),
+    //     (24649, true, true),
+    // ];
+
+    let parsed_course_nums: Vec<u16> = courses
+        .split(' ')
+        .map(|s| s.trim()) // (2)
+        .filter(|s| !s.is_empty()) // (3)
+        .map(|s| s.parse().unwrap()) // (4)
+        .collect();
+
+    println!("{:?}", parsed_course_nums);
+
+    for course in parsed_course_nums {
+        course_nums.push((course, true, true))
+    }
+
+    println!("{:?}", course_nums);
+
     let mut course_info: Vec<Course> = Vec::new();
 
     let table_selector_string: &str = "table.datadisplaytable>tbody";
@@ -51,28 +70,6 @@ fn get_courses() -> String {
         let all_tables = document.select(&table_selector);
 
         for table in all_tables {
-            // let mut heads: Vec<String> = Vec::new();
-
-            // let head_elements = table.select(&head_elements_selector);
-
-            // for head_element in head_elements {
-            //     let mut element = head_element.text().collect::<Vec<_>>().join(" ");
-            //     element = element.trim().replace("\n", " ").to_lowercase();
-            //     if !element.is_empty() {
-            // println!("head: {}", element);
-            //         heads.push(element);
-            //     }
-            // }
-
-            // if !heads.is_empty() {
-            //     for i in 0..3 {
-            //         heads.push("waitlist_".to_owned() + &heads[i].clone());
-            //         heads[i].insert_str(0, "seats_");
-            //     }
-            // }
-
-            // println!("print heads: {:?}", heads);
-
             let row_elements = table.select(&row_element_data_selector);
 
             for row_element in row_elements {
@@ -87,13 +84,11 @@ fn get_courses() -> String {
                 }
             }
 
-            // println!("print rows: {:?}", rows);
-
             break;
         }
 
         course_info.push(Course {
-            num: num.0,
+            num: num.0.clone(),
             seats_capacity: rows[0].to_string(),
             seats_current: rows[1].to_string(),
             seats_remaining: rows[2].to_string(),
@@ -130,11 +125,11 @@ fn get_courses() -> String {
     for num in course_nums.iter() {
         if !num.1 {
             println!("Course {} has a free spot.", num.0);
-            free_courses[0].push(num.0);
+            free_courses[0].push(num.0.clone());
         }
         if !num.2 {
             println!("Course {} has a free waitlist slot.", num.0);
-            free_courses[1].push(num.0);
+            free_courses[1].push(num.0.clone());
         }
     }
 

@@ -1,6 +1,5 @@
 import { createSignal, For } from "solid-js";
 import { createStore } from "solid-js/store";
-import { invoke } from "@tauri-apps/api/tauri";
 import toast, { Toaster } from "solid-toast";
 
 import "./App.scss";
@@ -11,8 +10,8 @@ import {
   checkCourseExists,
   courseMAX,
   courseMIN,
+  get_courses,
 } from "./utils";
-import { courseTag } from "./components/courseTag";
 
 const [courses, setCourses] = createStore<Course[]>([
   {
@@ -75,7 +74,12 @@ const App = () => {
   const getData = async () => {
     setData("Loading");
     toast.loading("Fetching your data");
-    setData(await invoke("get_courses"));
+
+    const courseArr = courses.map((el: Course) => {
+      return el.courseNum;
+    });
+
+    setData(await get_courses(courseArr));
 
     toast.remove();
     toast.success("Retrieved!");
@@ -96,10 +100,7 @@ const App = () => {
               onChange={async (e) => {
                 const value: number = e.target.value as number;
 
-                if (
-                  value < courseMAX &&
-                  value > courseMIN
-                ) {
+                if (value < courseMAX && value > courseMIN) {
                   console.log("hi");
                   const idx = courses.findIndex(
                     (el: Course) => el.id === course.id
