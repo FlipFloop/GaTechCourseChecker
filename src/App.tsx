@@ -3,16 +3,23 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { open } from "@tauri-apps/api/shell";
 import "./App.css";
 
-const App = () => {
-  const [data, setData] = createSignal("");
+import toast, { Toaster } from "solid-toast";
 
-  const [courses, setCourses] = createSignal([
-    21135, 25587, 27395, 24649,
-  ]);
+const showSuccess = () => toast.success("Retrieved!");
+
+const App = () => {
+  
+  const [courses, setCourses] = createSignal([21135, 25587, 27395, 24649]);
+  const [data, setData] = createSignal("");
+  
 
   const getData = async () => {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+    setData("Loading");
+    toast.loading("Fetching your data");
     setData(await invoke("get_courses"));
+
+    toast.remove();
+    showSuccess();
   };
 
   const openLink = async () => {
@@ -23,6 +30,7 @@ const App = () => {
 
   return (
     <div class="container">
+      <Toaster />
       <h1>Georgia Tech self-coursicle!</h1>
       <h4>{courses().join(", ")}</h4>
       <div class="row">
@@ -34,13 +42,7 @@ const App = () => {
             type="number"
             use:model={[courses, setCourses]}
           /> */}
-          <button
-            type="button"
-            onClick={() => {
-              setData("Loading");
-              getData();
-            }}
-          >
+          <button type="button" onClick={getData}>
             Get Course Data
           </button>
         </div>
