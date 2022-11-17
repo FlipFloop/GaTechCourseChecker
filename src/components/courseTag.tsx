@@ -2,8 +2,9 @@ import { Component } from "solid-js";
 import { Course } from "../utils";
 
 export const courseTag = (course: Course) => {
-  return <div>
-    {/* <input
+  return (
+    <div>
+      {/* <input
                 type="checkbox"
                 style="width:50px;"
                 checked=${course.done}
@@ -26,5 +27,6 @@ export const courseTag = (course: Course) => {
               >
                 &#10060
               </button> */}
-  </div>;
+    </div>
+  );
 };

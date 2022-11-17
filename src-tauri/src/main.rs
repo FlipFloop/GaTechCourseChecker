@@ -145,9 +145,34 @@ fn get_courses() -> String {
     );
 }
 
+#[tauri::command]
+fn check_course_exists(course_id: String) -> String {
+    let response = reqwest::blocking::get(format!(
+        "https://oscar.gatech.edu/pls/bprod/bwckschd.p_disp_detail_sched?term_in=202302&crn_in={}",
+        course_id,
+    ))
+    .unwrap()
+    .text()
+    .unwrap();
+
+    let document = scraper::Html::parse_document(&response);
+    let error_str: &str = "tbody>tr>td.pldefault>span.errortext";
+
+    let err_selector = Selector::parse(error_str).unwrap();
+
+    let err_exists = document.select(&err_selector);
+
+    for el in err_exists {
+        if el.text().collect::<String>() == "No detailed class information found" {
+            return format!("{}", false);
+        }
+    }
+    return format!("{}", true);
+}
+
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![get_courses])
+        .invoke_handler(tauri::generate_handler![get_courses, check_course_exists])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

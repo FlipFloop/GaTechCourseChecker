@@ -5,7 +5,13 @@ import toast, { Toaster } from "solid-toast";
 
 import "./App.scss";
 
-import { Course, openLink, courseMAX, courseMIN } from "./utils";
+import {
+  Course,
+  openLink,
+  checkCourseExists,
+  courseMAX,
+  courseMIN,
+} from "./utils";
 import { courseTag } from "./components/courseTag";
 
 const [courses, setCourses] = createStore<Course[]>([
@@ -38,22 +44,19 @@ const [courses, setCourses] = createStore<Course[]>([
 const [newCourse, setNewCourse] = createSignal(0);
 
 const addCourse = () => {
-  let valid = true;
-
   if (newCourse() > courseMAX || newCourse() < courseMIN) {
     toast.error("Course value not in range");
     return;
   }
 
-  courses.some((course: any) => {
-    if (course.courseNum == newCourse()) {
-      console.log("hit");
-      valid = false;
-    }
-    console.log("hi");
-  });
+  if (!checkCourseExists(newCourse())) {
+    toast.error("Course CRN doesn't exist");
+    return;
+  }
 
-  if (valid) {
+  const valid = courses.some((course: any) => course.courseNum == newCourse());
+
+  if (!valid) {
     setCourses([
       ...courses,
       {
@@ -90,23 +93,25 @@ const App = () => {
               min={courseMIN}
               max={courseMAX}
               type="number"
-              onChange={(e) => {
+              onChange={async (e) => {
                 const value: number = e.target.value as number;
 
-                if (value < courseMAX && value > courseMIN) {
+                if (
+                  value < courseMAX &&
+                  value > courseMIN
+                ) {
                   console.log("hi");
                   const idx = courses.findIndex(
                     (el: Course) => el.id === course.id
                   );
                   setCourses(idx, { courseNum: e.target.value as number });
                 }
-
               }}
             />
             <button
-              onClick={() =>
-                setCourses(courses.filter((el: any) => el.id !== course.id))
-              }
+              onClick={() => {
+                setCourses(courses.filter((el: any) => el.id !== course.id));
+              }}
             >
               &#10060
             </button>
