@@ -1,4 +1,4 @@
-import { createSignal, For } from "solid-js";
+import { createEffect, createSignal, For, onMount } from "solid-js";
 import { createStore } from "solid-js/store";
 import toast, { Toaster } from "solid-toast";
 
@@ -89,6 +89,18 @@ const addCourse = async () => {
 
 const App = () => {
   const [data, setData] = createSignal("No data fetched!");
+
+  onMount(() => {
+    const localStorageItems: string = localStorage.getItem("courses") || "";
+    if (localStorageItems?.length > 5) {
+      setCourses(JSON.parse(localStorageItems));
+      toast.success("Loaded in Local Data");
+    }
+  });
+
+  createEffect(() => {
+    localStorage.setItem("courses", JSON.stringify(courses));
+  }, courses);
 
   const getData = async () => {
     if (courses.length == 0) {
