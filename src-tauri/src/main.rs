@@ -153,10 +153,13 @@ fn check_course_exists(course_id: String) -> bool {
 
     for el in err_exists {
         if el.text().collect::<String>() == "No detailed class information found" {
-            return true;
+            println!("Doesn't exist: {}", course_id);
+            return false;
         }
     }
-    return false;
+
+    println!("Does Exist: {}", course_id);
+    return true;
 }
 
 fn main() {

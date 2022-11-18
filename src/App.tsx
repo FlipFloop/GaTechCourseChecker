@@ -1,4 +1,4 @@
-import { createEffect, createSignal, For, onMount } from "solid-js";
+import { createEffect, createSignal, For, onMount, Show } from "solid-js";
 import { createStore } from "solid-js/store";
 import toast, { Toaster } from "solid-toast";
 
@@ -50,7 +50,9 @@ const addCourse = async () => {
 
   const courseExists = await checkCourseExists(newCourse());
 
-  if (courseExists) {
+  console.log(courseExists);
+
+  if (!courseExists) {
     toast.error("Course CRN doesn't exist");
     return;
   }
@@ -72,6 +74,7 @@ const addCourse = async () => {
         courseNum: newCourse(),
         seatAvailable: false,
         waitlistAvailable: false,
+        valid: true,
       },
     ]);
     return;
@@ -83,6 +86,7 @@ const addCourse = async () => {
       courseNum: newCourse(),
       seatAvailable: false,
       waitlistAvailable: false,
+      valid: true,
     },
   ]);
 };
@@ -98,22 +102,51 @@ const App = () => {
     }
   });
 
-  createEffect(() => {
+  const saveCourses = () => {
+    checkCoursesValid();
     localStorage.setItem("courses", JSON.stringify(courses));
-  }, courses);
+  };
+
+  const checkCoursesValid = async () => {
+    let invalidCoursesIdx: number[] = [];
+
+    console.log(courses);
+
+    for (let i = 0; i < courses.length; i++) {
+      const courseExists = await checkCourseExists(courses[i].courseNum);
+      if (!courseExists) {
+        invalidCoursesIdx.push(i);
+        console.log(i);
+      }
+    }
+
+    console.log("invalid!");
+
+    for (let i = 0; i < invalidCoursesIdx.length; i++) {
+      console.log(invalidCoursesIdx[i]);
+      setCourses(invalidCoursesIdx[i], { valid: false });
+    }
+  };
 
   const getData = async () => {
     if (courses.length == 0) {
       toast.error("Add a course before fetching data!");
       return;
     }
+
     setData("Loading");
     toast.loading("Fetching your data");
+    checkCoursesValid();
 
-    const courseArr = courses.map((el: Course) => {
-      return el.courseNum;
-    });
+    const courseArr = courses
+      .filter((el: Course) => {
+        return el.valid == true;
+      })
+      .map((el: Course) => {
+        return el.courseNum;
+      });
 
+    console.log(courseArr);
     setData(await get_courses(courseArr));
 
     toast.remove();
@@ -123,7 +156,7 @@ const App = () => {
   return (
     <div class="container">
       <Toaster />
-      <h1>Georgia Tech self-coursicle!</h1>
+      <h1>Georgia Tech self-course checker!</h1>
       <For each={courses}>
         {(course: Course) => (
           <div>
@@ -133,14 +166,10 @@ const App = () => {
               max={courseMAX}
               type="number"
               onChange={async (e) => {
-                const value: number = e.target.value as number;
-
-                if (value < courseMAX && value > courseMIN) {
-                  const idx = courses.findIndex(
-                    (el: Course) => el.id === course.id
-                  );
-                  setCourses(idx, { courseNum: e.target.value as number });
-                }
+                const idx = courses.findIndex(
+                  (el: Course) => el.id === course.id
+                );
+                setCourses(idx, { courseNum: e.target.value as number });
               }}
             />
             <button
@@ -148,8 +177,14 @@ const App = () => {
                 setCourses(courses.filter((el: any) => el.id !== course.id));
               }}
             >
-              &#10060
+              &#10060 Remove
             </button>
+            <Show when={course.valid}>
+              <button>&#x2705 Course CRN is valid</button>
+            </Show>
+            <Show when={!course.valid}>
+              <button>! CRN Doesn't exist !</button>
+            </Show>
           </div>
         )}
       </For>
@@ -166,6 +201,10 @@ const App = () => {
         />
         <button onClick={addCourse}>&#10133 Add Course</button>
       </div>
+      <button type="button" onClick={saveCourses}>
+        Save Courses
+      </button>
+      <br />
       <button type="button" onClick={getData}>
         Get Course Data
       </button>
