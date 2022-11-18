@@ -23,12 +23,6 @@ fn get_courses(courses: String) -> String {
 
     // course num, course full remain, waitlist full
     let mut course_nums: Vec<(u16, bool, bool)> = vec![];
-    // let mut course_nums: Vec<(u16, bool, bool)> = vec![
-    //     (21135, true, true),
-    //     (25587, true, true),
-    //     (27395, true, true),
-    //     (24649, true, true),
-    // ];
 
     let parsed_course_nums: Vec<u16> = courses
         .split(' ')
@@ -141,7 +135,7 @@ fn get_courses(courses: String) -> String {
 }
 
 #[tauri::command]
-fn check_course_exists(course_id: String) -> String {
+fn check_course_exists(course_id: String) -> bool {
     let response = reqwest::blocking::get(format!(
         "https://oscar.gatech.edu/pls/bprod/bwckschd.p_disp_detail_sched?term_in=202302&crn_in={}",
         course_id,
@@ -159,10 +153,10 @@ fn check_course_exists(course_id: String) -> String {
 
     for el in err_exists {
         if el.text().collect::<String>() == "No detailed class information found" {
-            return format!("{}", false);
+            return true;
         }
     }
-    return format!("{}", true);
+    return false;
 }
 
 fn main() {
