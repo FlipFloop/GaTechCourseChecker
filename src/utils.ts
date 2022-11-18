@@ -15,7 +15,7 @@ export const openLink = async () => {
 export const checkCourseExists = async (courseNumber: number) => {
   const exists = await invoke("check_course_exists", {
     courseId: courseNumber,
-  })
+  });
 
   return exists;
 };

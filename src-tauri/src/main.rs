@@ -150,7 +150,7 @@ fn check_course_exists(course_id: String) -> bool {
     let err_selector = Selector::parse(error_str).unwrap();
 
     let err_exists = document.select(&err_selector);
-    
+
     for el in err_exists {
         if el.text().collect::<String>() == "No detailed class information found" {
             return true;
