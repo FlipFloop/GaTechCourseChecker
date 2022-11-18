@@ -135,7 +135,7 @@ fn get_courses(courses: String) -> String {
 }
 
 #[tauri::command]
-fn check_course_exists(course_id: String) -> String {
+fn check_course_exists(course_id: String) -> bool {
     let response = reqwest::blocking::get(format!(
         "https://oscar.gatech.edu/pls/bprod/bwckschd.p_disp_detail_sched?term_in=202302&crn_in={}",
         course_id,
@@ -150,13 +150,13 @@ fn check_course_exists(course_id: String) -> String {
     let err_selector = Selector::parse(error_str).unwrap();
 
     let err_exists = document.select(&err_selector);
-
+    
     for el in err_exists {
         if el.text().collect::<String>() == "No detailed class information found" {
-            return format!("{}", false);
+            return true;
         }
     }
-    return format!("{}", true);
+    return false;
 }
 
 fn main() {
