@@ -1,16 +1,15 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { open } from "@tauri-apps/api/shell";
 
+export const courseMIN = 10000;
+export const courseMAX = 99999;
+
 export type Course = {
   id: number;
   courseNum: number;
   seatAvailable: boolean;
   waitlistAvailable: boolean;
   valid: boolean;
-};
-
-export const openLink = async () => {
-  open("https://oscar.gatech.edu/bprod/twbkwbis.P_GenMenu?name=bmenu.P_RegMnu");
 };
 
 const existingCourses: number[] = [];
@@ -59,5 +58,6 @@ export const get_courses = async (courseArr: number[]) => {
   return data as string;
 };
 
-export const courseMIN = 10000;
-export const courseMAX = 99999;
+export const openLink = async () => {
+  open("https://oscar.gatech.edu/bprod/twbkwbis.P_GenMenu?name=bmenu.P_RegMnu");
+};

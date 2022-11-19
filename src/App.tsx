@@ -103,8 +103,11 @@ const App = () => {
   });
 
   const saveCourses = () => {
+    toast.loading("Saving courses...");
     checkCoursesValid();
     localStorage.setItem("courses", JSON.stringify(courses));
+    toast.remove();
+    toast.success("Course CRNs saved!");
   };
 
   const checkCoursesValid = async () => {
@@ -134,9 +137,9 @@ const App = () => {
       return;
     }
 
-    setData("Loading");
+    saveCourses();
+    // setData("Loading");
     toast.loading("Fetching your data");
-    checkCoursesValid();
 
     const courseArr = courses
       .filter((el: Course) => {
