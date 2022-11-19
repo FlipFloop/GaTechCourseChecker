@@ -1,5 +1,5 @@
 import { Component } from "solid-js";
-import { Course } from "../utils";
+import { Course } from "../utils/backend";
 
 export const courseTag = (course: Course) => {
   return (
