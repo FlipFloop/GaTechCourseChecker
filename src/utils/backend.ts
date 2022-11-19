@@ -1,15 +1,7 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { open } from "@tauri-apps/api/shell";
 
-export const courseMIN = 10000;
-export const courseMAX = 99999;
-
-export type Course = {
-  courseNum: number;
-  seatAvailable: boolean;
-  waitlistAvailable: boolean;
-  valid: boolean;
-};
+import { courseMIN, courseMAX } from "./types";
 
 const existingCourses: number[] = [];
 const nonExistingCourses: number[] = [];
@@ -17,23 +9,17 @@ const nonExistingCourses: number[] = [];
 export const checkCourseExists = async (
   courseNumber: number
 ): Promise<boolean> => {
-  const startTime = performance.now();
-
   if (
     nonExistingCourses.includes(courseNumber) ||
     courseNumber > courseMAX ||
     courseNumber < courseMIN
   ) {
-    console.log("Doesn't exist or not in bounds");
     return false;
   }
 
   if (existingCourses.includes(courseNumber)) {
-    console.log("Exists");
     return true;
   }
-
-  console.log("invoke");
 
   const exists: boolean = await invoke("check_course_exists", {
     courseId: courseNumber,
@@ -46,10 +32,6 @@ export const checkCourseExists = async (
   }
   console.log("Existing: " + existingCourses);
   console.log("Non existing: " + nonExistingCourses);
-
-  const endTime = performance.now();
-
-  console.log("TTE: " + (endTime - startTime) + "ms");
 
   return exists;
 };

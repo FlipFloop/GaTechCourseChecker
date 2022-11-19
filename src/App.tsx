@@ -1,84 +1,20 @@
 import { createEffect, createSignal, For, onMount, Show } from "solid-js";
-import { createStore } from "solid-js/store";
 import toast, { Toaster } from "solid-toast";
-
 import "./App.scss";
 
+import type { Course } from "./utils/types";
+import { courseMAX, courseMIN } from "./utils/types";
+import { openLink, get_courses } from "./utils/backend";
 import {
-  Course,
-  openLink,
-  checkCourseExists,
-  courseMAX,
-  courseMIN,
-  get_courses,
-} from "./utils";
-
-const [courses, setCourses] = createStore<Course[]>([
-  // {
-  //   id: 1,
-  //   courseNum: 21135,
-  //   seatAvailable: false,
-  //   waitlistAvailable: false,
-  // },
-  // {
-  //   id: 2,
-  //   courseNum: 25587,
-  //   seatAvailable: false,
-  //   waitlistAvailable: false,
-  // },
-  // {
-  //   id: 3,
-  //   courseNum: 27395,
-  //   seatAvailable: false,
-  //   waitlistAvailable: false,
-  // },
-  // {
-  //   id: 4,
-  //   courseNum: 24649,
-  //   seatAvailable: false,
-  //   waitlistAvailable: false,
-  // },
-]);
-
-const [newCourse, setNewCourse] = createSignal(0);
-
-const addCourse = async () => {
-  if (newCourse() > courseMAX || newCourse() < courseMIN) {
-    toast.error("Course value not in range");
-    return;
-  }
-
-  const courseExists = await checkCourseExists(newCourse());
-
-  console.log(courseExists);
-
-  if (!courseExists) {
-    toast.error("Course CRN doesn't exist");
-    return;
-  }
-
-  const isInList = courses.some(
-    (course: any) => course.courseNum == newCourse()
-  );
-
-  if (isInList) {
-    toast.error("Course already in your list");
-    return;
-  }
-
-  setCourses([
-    ...courses,
-    {
-      courseNum: newCourse(),
-      seatAvailable: false,
-      waitlistAvailable: false,
-      valid: true,
-    },
-  ]);
-};
+  addCourse,
+  saveCourses,
+  courses,
+  setCourses,
+} from "./utils/dataManagement";
 
 const App = () => {
   const [data, setData] = createSignal("No data fetched!");
+  const [newCourse, setNewCourse] = createSignal(0);
 
   onMount(() => {
     const localStorageItems: string = localStorage.getItem("courses") || "";
@@ -87,54 +23,6 @@ const App = () => {
       toast.success("Loaded in Local Data");
     }
   });
-
-  const saveCourses = async () => {
-    console.log(courses);
-    const loadToast = toast.loading("Saving courses...");
-
-    if (courses.length == 0) {
-      toast.error("No courses to save/fetch!");
-      return false;
-    }
-
-    await checkCoursesValid().then(() => {
-      localStorage.setItem("courses", JSON.stringify(courses));
-    });
-
-    toast.success("Course CRNs saved!");
-    console.log("Course CRNs saved!");
-    toast.remove(loadToast);
-
-    return true;
-  };
-
-  const checkCoursesValid = async () => {
-    let invalidCourses: number[] = [];
-    let validCourses: number[] = [];
-
-    console.log(courses);
-
-    for (let i = 0; i < courses.length; i++) {
-      const courseExists = await checkCourseExists(courses[i].courseNum);
-      if (!courseExists) {
-        invalidCourses.push(i);
-        console.log(`Course CRN ${courses[i].courseNum} is invalid!`);
-      } else {
-        validCourses.push(i);
-        console.log(`Course CRN ${courses[i].courseNum} is valid!`);
-      }
-    }
-
-    for (let i = 0; i < invalidCourses.length; i++) {
-      console.log(invalidCourses[i]);
-      setCourses(invalidCourses[i], { valid: false });
-    }
-
-    for (let i = 0; i < validCourses.length; i++) {
-      console.log(validCourses[i]);
-      setCourses(validCourses[i], { valid: true });
-    }
-  };
 
   const getData = async () => {
     if (!(await saveCourses())) {
@@ -152,7 +40,6 @@ const App = () => {
         return el.courseNum;
       });
 
-    console.log(courseArr);
     setData(await get_courses(courseArr));
 
     toast.remove(loadToast);
@@ -207,7 +94,13 @@ const App = () => {
           min={courseMIN}
           max={courseMAX}
         />
-        <button onClick={addCourse}>&#10133 Add Course</button>
+        <button
+          onClick={() => {
+            addCourse(newCourse());
+          }}
+        >
+          &#10133 Add Course
+        </button>
       </div>
       <button type="button" onClick={saveCourses}>
         Save Courses

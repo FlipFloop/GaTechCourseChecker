@@ -128,8 +128,7 @@ fn get_courses(courses: String) -> String {
     }
 
     return format!(
-        "Course(s) {:?} has a free spot. \n
-            Course {:?} has a free waitlist slot.",
+        "Course(s) {:?} has/have a free spot. Course(s) {:?} has/have a free waitlist slot.",
         free_courses[0], free_courses[1]
     );
 }
