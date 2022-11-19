@@ -5,7 +5,6 @@ export const courseMIN = 10000;
 export const courseMAX = 99999;
 
 export type Course = {
-  id: number;
   courseNum: number;
   seatAvailable: boolean;
   waitlistAvailable: boolean;
@@ -15,7 +14,9 @@ export type Course = {
 const existingCourses: number[] = [];
 const nonExistingCourses: number[] = [];
 
-export const checkCourseExists = async (courseNumber: number) => {
+export const checkCourseExists = async (
+  courseNumber: number
+): Promise<boolean> => {
   const startTime = performance.now();
 
   if (
@@ -34,7 +35,7 @@ export const checkCourseExists = async (courseNumber: number) => {
 
   console.log("invoke");
 
-  const exists = await invoke("check_course_exists", {
+  const exists: boolean = await invoke("check_course_exists", {
     courseId: courseNumber,
   });
 
@@ -48,7 +49,7 @@ export const checkCourseExists = async (courseNumber: number) => {
 
   const endTime = performance.now();
 
-  console.log("TTE: " + (endTime - startTime));
+  console.log("TTE: " + (endTime - startTime) + "ms");
 
   return exists;
 };
