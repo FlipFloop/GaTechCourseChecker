@@ -66,23 +66,9 @@ const addCourse = async () => {
     return;
   }
 
-  if (courses.length > 0) {
-    setCourses([
-      ...courses,
-      {
-        id: courses[courses.length - 1].id + 1,
-        courseNum: newCourse(),
-        seatAvailable: false,
-        waitlistAvailable: false,
-        valid: true,
-      },
-    ]);
-    return;
-  }
-
   setCourses([
+    ...courses,
     {
-      id: 1,
       courseNum: newCourse(),
       seatAvailable: false,
       waitlistAvailable: false,
@@ -102,41 +88,61 @@ const App = () => {
     }
   });
 
-  const saveCourses = () => {
-    checkCoursesValid();
-    localStorage.setItem("courses", JSON.stringify(courses));
+  const saveCourses = async () => {
+    console.log(courses);
+    const loadToast = toast.loading("Saving courses...");
+
+    if (courses.length == 0) {
+      toast.error("No courses to save/fetch!");
+      return false;
+    }
+
+    await checkCoursesValid().then(() => {
+      localStorage.setItem("courses", JSON.stringify(courses));
+    });
+
+    toast.success("Course CRNs saved!");
+    console.log("Course CRNs saved!");
+    toast.remove(loadToast);
+
+    return true;
   };
 
   const checkCoursesValid = async () => {
-    let invalidCoursesIdx: number[] = [];
+    let invalidCourses: number[] = [];
+    let validCourses: number[] = [];
 
     console.log(courses);
 
     for (let i = 0; i < courses.length; i++) {
       const courseExists = await checkCourseExists(courses[i].courseNum);
       if (!courseExists) {
-        invalidCoursesIdx.push(i);
-        console.log(i);
+        invalidCourses.push(i);
+        console.log(`Course CRN ${courses[i].courseNum} is invalid!`);
+      } else {
+        validCourses.push(i);
+        console.log(`Course CRN ${courses[i].courseNum} is valid!`);
       }
     }
 
-    console.log("invalid!");
+    for (let i = 0; i < invalidCourses.length; i++) {
+      console.log(invalidCourses[i]);
+      setCourses(invalidCourses[i], { valid: false });
+    }
 
-    for (let i = 0; i < invalidCoursesIdx.length; i++) {
-      console.log(invalidCoursesIdx[i]);
-      setCourses(invalidCoursesIdx[i], { valid: false });
+    for (let i = 0; i < validCourses.length; i++) {
+      console.log(validCourses[i]);
+      setCourses(validCourses[i], { valid: true });
     }
   };
 
   const getData = async () => {
-    if (courses.length == 0) {
-      toast.error("Add a course before fetching data!");
+    if (!(await saveCourses())) {
       return;
     }
 
     setData("Loading");
-    toast.loading("Fetching your data");
-    checkCoursesValid();
+    const loadToast = toast.loading("Fetching your data");
 
     const courseArr = courses
       .filter((el: Course) => {
@@ -149,7 +155,7 @@ const App = () => {
     console.log(courseArr);
     setData(await get_courses(courseArr));
 
-    toast.remove();
+    toast.remove(loadToast);
     toast.success("Retrieved!");
   };
 
@@ -167,14 +173,16 @@ const App = () => {
               type="number"
               onChange={async (e) => {
                 const idx = courses.findIndex(
-                  (el: Course) => el.id === course.id
+                  (el: Course) => el.courseNum === course.courseNum
                 );
                 setCourses(idx, { courseNum: e.target.value as number });
               }}
             />
             <button
               onClick={() => {
-                setCourses(courses.filter((el: any) => el.id !== course.id));
+                setCourses(
+                  courses.filter((el: any) => el.courseNum !== course.courseNum)
+                );
               }}
             >
               &#10060 Remove
