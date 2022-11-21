@@ -16,8 +16,7 @@ struct Course {
 }
 
 #[tauri::command]
-fn get_courses(courses: String) -> String {
-    // fn get_courses() -> String {
+fn get_courses(courses: String) ->  Vec<Vec<u16>> {
     println!("Courses searched: {}", courses);
     let mut free_courses: Vec<Vec<u16>> = vec![vec![], vec![]];
 
@@ -127,10 +126,7 @@ fn get_courses(courses: String) -> String {
         }
     }
 
-    return format!(
-        "Course(s) {:?} has/have a free spot. Course(s) {:?} has/have a free waitlist slot.",
-        free_courses[0], free_courses[1]
-    );
+    return free_courses;
 }
 
 #[tauri::command]

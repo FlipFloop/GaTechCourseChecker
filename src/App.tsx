@@ -1,6 +1,6 @@
-import { createEffect, createSignal, For, onMount, Show } from "solid-js";
+import { createSignal, For, onMount, Show } from "solid-js";
 import toast, { Toaster } from "solid-toast";
-import "./App.scss";
+import "./stylesheets/App.scss";
 
 import type { Course } from "./utils/types";
 import { courseMAX, courseMIN } from "./utils/types";
@@ -11,10 +11,13 @@ import {
   courses,
   setCourses,
 } from "./utils/dataManagement";
+import Results from "./components/Results";
+import CourseEntry from "./components/CourseEntry";
 
 const App = () => {
-  const [data, setData] = createSignal("No data fetched!");
-  const [newCourse, setNewCourse] = createSignal(0);
+  const [courseData, setCourseData] = createSignal<number[][]>([]);
+  const [newCourse, setNewCourse] = createSignal<number>(0);
+  const [fetched, setFetched] = createSignal<boolean>(false);
 
   onMount(() => {
     const localStorageItems: string = localStorage.getItem("courses") || "";
@@ -29,7 +32,8 @@ const App = () => {
       return;
     }
 
-    setData("Loading");
+    setCourseData([]);
+    setFetched(true);
     const loadToast = toast.loading("Fetching your data");
 
     const courseArr = courses
@@ -40,7 +44,7 @@ const App = () => {
         return el.courseNum;
       });
 
-    setData(await get_courses(courseArr));
+    setCourseData(await get_courses(courseArr));
 
     toast.remove(loadToast);
     toast.success("Retrieved!");
@@ -51,37 +55,7 @@ const App = () => {
       <Toaster />
       <h1>Georgia Tech self-course checker!</h1>
       <For each={courses}>
-        {(course: Course) => (
-          <div>
-            <input
-              value={course.courseNum}
-              min={courseMIN}
-              max={courseMAX}
-              type="number"
-              onChange={async (e) => {
-                const idx = courses.findIndex(
-                  (el: Course) => el.courseNum === course.courseNum
-                );
-                setCourses(idx, { courseNum: e.target.value as number });
-              }}
-            />
-            <button
-              onClick={() => {
-                setCourses(
-                  courses.filter((el: any) => el.courseNum !== course.courseNum)
-                );
-              }}
-            >
-              &#10060 Remove
-            </button>
-            <Show when={course.valid}>
-              <button>&#x2705 Course CRN is valid</button>
-            </Show>
-            <Show when={!course.valid}>
-              <button>! CRN Doesn't exist !</button>
-            </Show>
-          </div>
-        )}
+        {(course: Course) => <CourseEntry course={course} />}
       </For>
       <hr />
       <div class="row">
@@ -105,12 +79,13 @@ const App = () => {
       <button type="button" onClick={saveCourses}>
         Save Courses
       </button>
+
       <br />
       <button type="button" onClick={getData}>
         Get Course Data
       </button>
 
-      <h2>{data()}</h2>
+      <Results data={courseData()} fetched={fetched()} />
 
       <button type="button" onClick={openLink}>
         Go register!
