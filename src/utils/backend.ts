@@ -38,7 +38,7 @@ export const checkCourseExists = async (
 
 export const get_courses = async (courseArr: number[]) => {
   const data = await invoke("get_courses", { courses: courseArr.join(" ") });
-  return data as string;
+  return data as number[][];
 };
 
 export const openLink = async () => {
