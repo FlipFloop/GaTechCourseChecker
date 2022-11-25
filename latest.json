@@ -8,7 +8,7 @@
       "url": "https://victorguyard-git-dev-flipfloop.vercel.app/public/releases/macos/Test.app.tar.gz"
     },
     "darwin-aarch64": {
-      "signature": "",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHJzaWduIGVuY3J5cHRlZCBzZWNyZXQga2V5ClJXUlRZMEl5NFQrU0kxcjZBUjcrSnMxaE43aVl2Qlg4OXNWTnZNVlhDVFAwS3ZBODhrRUFBQkFBQUFBQUFBQUFBQUlBQUFBQXBNQ3pvcGJJYWpqRC9GZ1JRNUVZUzhic05iSnNkdU5mS05iaS9IVDNaZ0hFSjMxT3RocHBaOHNKR3hwTmdlRFgzSlN1eXpDWm91ZG03TFBPTVBrYVpVQXpnYVJERkViOXhsRUlOMXYvckdvWDViNXlYVDgzY2ExUWtGNVM0YXQwZXdFMFplUlAydGc9Cg",
       "url": "https://github.com/FlipFloop/GaTechCourseChecker/releases/download/v0.3.0-beta/Georgia.Tech.Course.Checker.app.tar.gz"
     },
     "linux-x86_64": {
