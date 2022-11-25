@@ -14,8 +14,6 @@ import {
 import Results from "./components/Results";
 import CourseEntry from "./components/CourseEntry";
 
-// "https://victorguyard-git-dev-flipfloop.vercel.app/releases/macos/0.3.0.json"
-
 const App = () => {
   const [courseData, setCourseData] = createSignal<number[][]>([]);
   const [newCourse, setNewCourse] = createSignal<number>(0);
@@ -56,6 +54,7 @@ const App = () => {
     <div class="container">
       <Toaster />
       <h1>Georgia Tech self-course checker!</h1>
+      <h3>Version number 0.2.0</h3>
       <For each={courses}>
         {(course: Course) => <CourseEntry course={course} />}
       </For>

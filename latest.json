@@ -9,7 +9,7 @@
     },
     "darwin-aarch64": {
       "signature": "",
-      "url": "https://victorguyard-git-dev-flipfloop.vercel.app/public/GaTechCourseChecker/macos/app.app"
+      "url": "https://github.com/FlipFloop/GaTechCourseChecker/releases/download/v0.3.0-beta/Georgia.Tech.Course.Checker.app.tar.gz"
     },
     "linux-x86_64": {
       "signature": "",
