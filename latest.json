@@ -1,0 +1,23 @@
+{
+  "version": "0.3.0",
+  "notes": "Updater Works version",
+  "pub_date": "2022-11-25T00:50:57Z",
+  "platforms": {
+    "darwin-x86_64": {
+      "signature": "",
+      "url": "https://victorguyard-git-dev-flipfloop.vercel.app/public/releases/macos/Test.app.tar.gz"
+    },
+    "darwin-aarch64": {
+      "signature": "",
+      "url": "https://victorguyard-git-dev-flipfloop.vercel.app/public/GaTechCourseChecker/macos/app.app"
+    },
+    "linux-x86_64": {
+      "signature": "",
+      "url": "https://github.com/lemarier/tauri-test/releases/download/v1.0.0/app.AppImage.tar.gz"
+    },
+    "windows-x86_64": {
+      "signature": "",
+      "url": "https://github.com/lemarier/tauri-test/releases/download/v1.0.0/app.x64.msi.zip"
+    }
+  }
+}

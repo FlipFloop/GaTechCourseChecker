@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "Georgia Tech Course Checker",
-    "version": "0.2.0"
+    "version": "0.3.0"
   },
   "tauri": {
     "allowlist": {
@@ -53,7 +53,8 @@
     "updater": {
         "active": true,
         "endpoints": [
-            "https://victorguyard.com/public/GaTechCourseChecker/{{target}}/{{current_version}}"
+          "https://gist.githubusercontent.com/FlipFloop/2eb9f445b4ae4e95d5bb86d2ed350b7f/raw/3d5f83f7087d0f3588871e1db5e2202443d8a0d8/GaTechCourseChecker-latest.json"
+          
         ],
         "dialog": true,
         "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDQ0RjhDRDg4QTRCOURFRTEKUldUaDNybWtpTTM0UkhYcHptMzFsTU5CS2FWZmRrcmM5aVRGMWo1MzhkRG9JZWV3SzFEWXZJTkMK"

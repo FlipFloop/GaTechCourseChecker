@@ -157,14 +157,22 @@ fn check_course_exists(course_id: String) -> bool {
     return true;
 }
 
+use tauri::Manager;
 fn main() {
     // tauri::window::emit("tauri://update".to_string(), None);
     // tauri::listen("tauri://update-available".to_string(), move |msg| {
     //     println!("New version available: {:?}", msg);
     //   });
     tauri::Builder::default()
+        .setup(|app| {
+            #[cfg(debug_assertions)] // only include this code on debug builds
+            {
+                let window = app.get_window("main").unwrap();
+                window.open_devtools();
+            }
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![get_courses, check_course_exists])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
-
 }

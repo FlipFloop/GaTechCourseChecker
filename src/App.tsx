@@ -14,6 +14,8 @@ import {
 import Results from "./components/Results";
 import CourseEntry from "./components/CourseEntry";
 
+// "https://victorguyard-git-dev-flipfloop.vercel.app/releases/macos/0.3.0.json"
+
 const App = () => {
   const [courseData, setCourseData] = createSignal<number[][]>([]);
   const [newCourse, setNewCourse] = createSignal<number>(0);
