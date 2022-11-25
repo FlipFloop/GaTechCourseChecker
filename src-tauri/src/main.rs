@@ -4,7 +4,7 @@
 )]
 
 use scraper::Selector;
-
+use tauri::Manager;
 struct Course {
     num: u16,
     seats_capacity: String,
@@ -16,7 +16,7 @@ struct Course {
 }
 
 #[tauri::command]
-fn get_courses(courses: String) ->  Vec<Vec<u16>> {
+fn get_courses(courses: String) -> Vec<Vec<u16>> {
     println!("Courses searched: {}", courses);
     let mut free_courses: Vec<Vec<u16>> = vec![vec![], vec![]];
 
@@ -25,9 +25,9 @@ fn get_courses(courses: String) ->  Vec<Vec<u16>> {
 
     let parsed_course_nums: Vec<u16> = courses
         .split(' ')
-        .map(|s| s.trim()) // (2)
-        .filter(|s| !s.is_empty()) // (3)
-        .map(|s| s.parse().unwrap()) // (4)
+        .map(|s| s.trim())
+        .filter(|s| !s.is_empty())
+        .map(|s| s.parse().unwrap())
         .collect();
 
     println!("{:?}", parsed_course_nums);
@@ -158,7 +158,19 @@ fn check_course_exists(course_id: String) -> bool {
 }
 
 fn main() {
+    // tauri::window::emit("tauri://update".to_string(), None);
+    // tauri::listen("tauri://update-available".to_string(), move |msg| {
+    //     println!("New version available: {:?}", msg);
+    //   });
     tauri::Builder::default()
+        .setup(|app| {
+            #[cfg(debug_assertions)] // only include this code on debug builds
+            {
+                let window = app.get_window("main").unwrap();
+                window.open_devtools();
+            }
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![get_courses, check_course_exists])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
