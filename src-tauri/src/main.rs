@@ -159,10 +159,6 @@ fn check_course_exists(course_id: String) -> bool {
 
 use tauri::Manager;
 fn main() {
-    // tauri::window::emit("tauri://update".to_string(), None);
-    // tauri::listen("tauri://update-available".to_string(), move |msg| {
-    //     println!("New version available: {:?}", msg);
-    //   });
     tauri::Builder::default()
         .setup(|app| {
             #[cfg(debug_assertions)] // only include this code on debug builds
