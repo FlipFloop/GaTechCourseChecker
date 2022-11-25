@@ -53,8 +53,7 @@
     "updater": {
         "active": true,
         "endpoints": [
-          "https://gist.githubusercontent.com/FlipFloop/2eb9f445b4ae4e95d5bb86d2ed350b7f/raw/3d5f83f7087d0f3588871e1db5e2202443d8a0d8/GaTechCourseChecker-latest.json"
-          
+          "https://raw.githubusercontent.com/FlipFloop/GaTechCourseChecker/updater/latest.json"
         ],
         "dialog": true,
         "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDQ0RjhDRDg4QTRCOURFRTEKUldUaDNybWtpTTM0UkhYcHptMzFsTU5CS2FWZmRrcmM5aVRGMWo1MzhkRG9JZWV3SzFEWXZJTkMK"
