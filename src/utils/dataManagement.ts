@@ -37,12 +37,12 @@ export const addCourse = async (courseCRN: number) => {
 };
 
 export const saveCourses = async () => {
-  const loadToast = toast.loading("Saving courses...");
-
   if (courses.length == 0) {
     toast.error("No courses to save/fetch!");
     return false;
   }
+
+  const loadToast = toast.loading("Saving courses...");
 
   await checkCoursesValid().then(() => {
     localStorage.setItem("courses", JSON.stringify(courses));
