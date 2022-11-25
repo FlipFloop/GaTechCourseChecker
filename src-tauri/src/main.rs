@@ -16,7 +16,7 @@ struct Course {
 }
 
 #[tauri::command]
-fn get_courses(courses: String) ->  Vec<Vec<u16>> {
+fn get_courses(courses: String) -> Vec<Vec<u16>> {
     println!("Courses searched: {}", courses);
     let mut free_courses: Vec<Vec<u16>> = vec![vec![], vec![]];
 
@@ -158,8 +158,13 @@ fn check_course_exists(course_id: String) -> bool {
 }
 
 fn main() {
+    // tauri::window::emit("tauri://update".to_string(), None);
+    // tauri::listen("tauri://update-available".to_string(), move |msg| {
+    //     println!("New version available: {:?}", msg);
+    //   });
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![get_courses, check_course_exists])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+
 }
