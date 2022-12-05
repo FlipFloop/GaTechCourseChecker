@@ -1,16 +1,15 @@
 {
-    "version": "0.4.0",
-    "notes": "Updater Works version",
-    "pub_date": "2022-11-25T00:50:57Z",
-    "platforms": {
-      "darwin-x86_64": {
-        "signature": "",
-        "url": "https://github.com/FlipFloop/GaTechCourseChecker/releases/download/v0.4.0-beta/Georgia.Tech.Course.Checker_x64.app.tar.gz"
-      },
-      "darwin-aarch64": {
-        "signature": "",
-        "url": "https://github.com/FlipFloop/GaTechCourseChecker/releases/download/v0.4.0-beta/Georgia.Tech.Course.Checker_aarch64.app.tar.gz"
-      }
+  "version": "0.4.0",
+  "notes": "Updater Works version",
+  "pub_date": "2022-11-25T00:50:57Z",
+  "platforms": {
+    "darwin-x86_64": {
+      "signature": "",
+      "url": "https://github.com/FlipFloop/GaTechCourseChecker/releases/download/v0.4.0-beta/Georgia.Tech.Course.Checker_x64.app.tar.gz"
+    },
+    "darwin-aarch64": {
+      "signature": "",
+      "url": "https://github.com/FlipFloop/GaTechCourseChecker/releases/download/v0.4.0-beta/Georgia.Tech.Course.Checker_aarch64.app.tar.gz"
     }
   }
-  
+}
