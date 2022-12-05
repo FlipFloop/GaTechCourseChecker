@@ -5,6 +5,7 @@
 
 use scraper::Selector;
 use tauri::Manager;
+use std::collections::HashMap;
 struct Course {
     num: u16,
     seats_capacity: String,
@@ -21,7 +22,7 @@ fn get_courses(courses: String) -> Vec<Vec<u16>> {
     let mut free_courses: Vec<Vec<u16>> = vec![vec![], vec![]];
 
     // course num, course full remain, waitlist full
-    let mut course_nums: Vec<(u16, bool, bool)> = vec![];
+    let mut course_availability = HashMap::new();
 
     let parsed_course_nums: Vec<u16> = courses
         .split(' ')
@@ -33,10 +34,10 @@ fn get_courses(courses: String) -> Vec<Vec<u16>> {
     println!("{:?}", parsed_course_nums);
 
     for course in parsed_course_nums {
-        course_nums.push((course, true, true))
+        course_availability.insert(course, (true, true));
     }
 
-    println!("{:?}", course_nums);
+    println!("{:?}", course_availability);
 
     let mut course_info: Vec<Course> = Vec::new();
 
@@ -44,10 +45,10 @@ fn get_courses(courses: String) -> Vec<Vec<u16>> {
 
     let mut rows: Vec<String> = Vec::new();
 
-    for num in course_nums.iter_mut() {
+    for (num, slots) in course_availability.iter_mut() {
         let response = reqwest::blocking::get(format!(
                     "https://oscar.gatech.edu/pls/bprod/bwckschd.p_disp_detail_sched?term_in=202302&crn_in={}",
-                    num.0,
+                    num,
                 ))
                 .unwrap()
                 .text()
@@ -81,7 +82,7 @@ fn get_courses(courses: String) -> Vec<Vec<u16>> {
         }
 
         course_info.push(Course {
-            num: num.0.clone(),
+            num: num.clone(),
             seats_capacity: rows[0].to_string(),
             seats_current: rows[1].to_string(),
             seats_remaining: rows[2].to_string(),
@@ -92,12 +93,12 @@ fn get_courses(courses: String) -> Vec<Vec<u16>> {
 
         if let Ok(result) = rows[2].parse::<u32>() {
             if result > 0 {
-                num.1 = false;
+                slots.0 = false;
             }
         }
         if let Ok(result) = rows[5].parse::<u32>() {
             if result > 0 {
-                num.2 = false;
+                slots.1 = false;
             }
         }
         rows.clear();
@@ -115,14 +116,14 @@ fn get_courses(courses: String) -> Vec<Vec<u16>> {
         println!("----------\n\n")
     }
 
-    for num in course_nums.iter() {
-        if !num.1 {
-            println!("Course {} has a free spot.", num.0);
-            free_courses[0].push(num.0.clone());
+    for (num, slots) in course_availability.iter() {
+        if !slots.0 {
+            println!("Course {} has a free spot.", &num);
+            free_courses[0].push(num.clone());
         }
-        if !num.2 {
-            println!("Course {} has a free waitlist slot.", num.0);
-            free_courses[1].push(num.0.clone());
+        if !slots.1 {
+            println!("Course {} has a free waitlist slot.", &num);
+            free_courses[1].push(num.clone());
         }
     }
 
@@ -158,10 +159,6 @@ fn check_course_exists(course_id: String) -> bool {
 }
 
 fn main() {
-    // tauri::window::emit("tauri://update".to_string(), None);
-    // tauri::listen("tauri://update-available".to_string(), move |msg| {
-    //     println!("New version available: {:?}", msg);
-    //   });
     tauri::Builder::default()
         .setup(|app| {
             #[cfg(debug_assertions)] // only include this code on debug builds
