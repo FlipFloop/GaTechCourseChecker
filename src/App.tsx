@@ -14,9 +14,12 @@ import {
 import Results from "./components/Results";
 import CourseEntry from "./components/CourseEntry";
 
+// 21135, 24649, 31465, 25587, 21570, 27395, 23456, 33754
+
 const App = () => {
   const [courseData, setCourseData] = createSignal<number[][]>([]);
   const [newCourse, setNewCourse] = createSignal<number>(0);
+  const [gtScheduleCourses, setGtScheduleCourses] = createSignal<number[]>([]);
   const [fetched, setFetched] = createSignal<boolean>(false);
 
   onMount(() => {
@@ -51,31 +54,50 @@ const App = () => {
   };
 
   return (
-    <div class="container">
+    <main class="container">
       <Toaster />
       <h1>Georgia Tech self-course checker!</h1>
       <For each={courses}>
         {(course: Course) => <CourseEntry course={course} />}
       </For>
       <hr />
-      <div class="row">
-        <input
-          id="course-num-input"
-          value={newCourse()}
-          onChange={(e) => setNewCourse(e.target.value as number)}
-          placeholder=""
-          type="number"
-          min={courseMIN}
-          max={courseMAX}
-        />
-        <button
-          onClick={() => {
-            addCourse(newCourse());
-          }}
-        >
-          &#10133 Add Course
-        </button>
-      </div>
+      <section class="col">
+        <div class="row">
+          <input
+            id="course-num-input"
+            value={newCourse()}
+            onChange={(e) => setNewCourse(e.target.value as number)}
+            placeholder=""
+            type="number"
+            min={courseMIN}
+            max={courseMAX}
+          />
+          <button
+            onClick={() => {
+              addCourse(newCourse());
+            }}
+          >
+            &#10133 Add Course
+          </button>
+        </div>
+        <div class="row">
+          <input
+            id="gt-scheduler-input"
+            value={gtScheduleCourses().join(", ")}
+            onChange={(e) => setGtScheduleCourses(e.target.value)}
+            placeholder=""
+            type="txt"
+          />
+          <p>{gtScheduleCourses()}</p>
+          <button
+            onClick={() => {
+              addCourse(newCourse());
+            }}
+          >
+            &#10133 Add Courses from GT-Scheduler
+          </button>
+        </div>
+      </section>
       <button type="button" onClick={saveCourses}>
         Save Courses
       </button>
@@ -90,7 +112,7 @@ const App = () => {
       <button type="button" onClick={openLink}>
         Go register!
       </button>
-    </div>
+    </main>
   );
 };
 

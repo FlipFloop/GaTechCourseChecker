@@ -11,16 +11,12 @@ export const addCourse = async (courseCRN: number) => {
     return;
   }
 
-  const courseExists = await checkCourseExists(courseCRN);
-
-  if (!courseExists) {
+  if (!(await checkCourseExists(courseCRN))) {
     toast.error("Course CRN doesn't exist");
     return;
   }
 
-  const isInList = courses.some((course: any) => course.courseNum == courseCRN);
-
-  if (isInList) {
+  if (courses.some((course: any) => course.courseNum === courseCRN)) {
     toast.error("Course already in your list");
     return;
   }
@@ -37,16 +33,15 @@ export const addCourse = async (courseCRN: number) => {
 };
 
 export const saveCourses = async () => {
-  if (courses.length == 0) {
+  if (courses.length === 0) {
     toast.error("No courses to save/fetch!");
     return false;
   }
 
   const loadToast = toast.loading("Saving courses...");
 
-  await checkCoursesValid().then(() => {
-    localStorage.setItem("courses", JSON.stringify(courses));
-  });
+  await checkCoursesValid();
+  localStorage.setItem("courses", JSON.stringify(courses));
 
   toast.success("Course CRNs saved!");
   console.log("Course CRNs saved!");
@@ -55,26 +50,20 @@ export const saveCourses = async () => {
   return true;
 };
 
+// chatGPT made this better ngl
 const checkCoursesValid = async () => {
-  let invalidCourses: number[] = [];
-  let validCourses: number[] = [];
+  const isValid: boolean[] = await Promise.all(
+    courses.map(async (course: Course) => {
+      return await checkCourseExists(course.courseNum);
+    })
+  );
 
-  for (let i = 0; i < courses.length; i++) {
-    const courseExists = await checkCourseExists(courses[i].courseNum);
-    if (!courseExists) {
-      invalidCourses.push(i);
-      console.log(`Course CRN ${courses[i].courseNum} is invalid!`);
-    } else {
-      validCourses.push(i);
-      console.log(`Course CRN ${courses[i].courseNum} is valid!`);
-    }
-  }
-
-  for (let i = 0; i < invalidCourses.length; i++) {
-    setCourses(invalidCourses[i], { valid: false });
-  }
-
-  for (let i = 0; i < validCourses.length; i++) {
-    setCourses(validCourses[i], { valid: true });
-  }
+  setCourses(
+    courses.map((course, i) => {
+      return {
+        ...course,
+        valid: isValid[i],
+      };
+    })
+  );
 };

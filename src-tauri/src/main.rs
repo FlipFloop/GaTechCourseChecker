@@ -22,7 +22,7 @@ fn get_courses(courses: String) -> Vec<Vec<u16>> {
     let mut free_courses: Vec<Vec<u16>> = vec![vec![], vec![]];
 
     // course num, course full remain, waitlist full
-    let mut course_availability = HashMap::new();
+    let mut course_availability: HashMap<u16, (bool, bool)> = HashMap::new();
 
     let parsed_course_nums: Vec<u16> = courses
         .split(' ')

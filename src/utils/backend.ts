@@ -30,6 +30,7 @@ export const checkCourseExists = async (
   } else {
     nonExistingCourses.push(courseNumber);
   }
+
   console.log("Existing: " + existingCourses);
   console.log("Non existing: " + nonExistingCourses);
 
