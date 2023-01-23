@@ -10,11 +10,10 @@ import {
   saveCourses,
   courses,
   setCourses,
+  clearLocalStorage,
 } from "./utils/dataManagement";
 import Results from "./components/Results";
 import CourseEntry from "./components/CourseEntry";
-
-// 21135, 24649, 31465, 25587, 21570, 27395, 23456, 33754
 
 const App = () => {
   const [courseData, setCourseData] = createSignal<number[][]>([]);
@@ -111,6 +110,10 @@ const App = () => {
 
       <button type="button" onClick={openLink}>
         Go register!
+      </button>
+
+      <button type="button" onClick={clearLocalStorage}>
+        Cler Storage
       </button>
     </main>
   );

@@ -50,6 +50,15 @@ export const saveCourses = async () => {
   return true;
 };
 
+export const clearLocalStorage = async () => {
+  const loadToast = toast.loading("Clearing...");
+
+  localStorage.clear();
+  toast.success("Local Storage Reset!");
+  console.log("Local Storage Reset!");
+  toast.remove(loadToast);
+};
+
 // chatGPT made this better ngl
 const checkCoursesValid = async () => {
   const isValid: boolean[] = await Promise.all(
