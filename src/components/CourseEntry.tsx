@@ -1,5 +1,4 @@
 import { Component, Show } from "solid-js";
-import { SetStoreFunction } from "solid-js/store";
 
 import { courses, setCourses } from "../utils/dataManagement";
 import { courseMAX, courseMIN, Course } from "../utils/types";
@@ -12,7 +11,7 @@ const CourseEntry: Component<{ course: Course }> = (props) => {
         min={courseMIN}
         max={courseMAX}
         type="number"
-        onChange={async (e) => {
+        onChange={async (e: any) => {
           const idx = courses.findIndex(
             (el: Course) => el.courseNum === props.course.courseNum
           );

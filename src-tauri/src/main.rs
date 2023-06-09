@@ -47,7 +47,7 @@ fn get_courses(courses: String) -> Vec<Vec<u16>> {
 
     for (num, slots) in course_availability.iter_mut() {
         let response = reqwest::blocking::get(format!(
-                    "https://oscar.gatech.edu/pls/bprod/bwckschd.p_disp_detail_sched?term_in=202302&crn_in={}",
+                    "https://oscar.gatech.edu/pls/bprod/bwckschd.p_disp_detail_sched?term_in=202308&crn_in={}",
                     num,
                 ))
                 .unwrap()
@@ -68,7 +68,7 @@ fn get_courses(courses: String) -> Vec<Vec<u16>> {
 
             for row_element in row_elements {
                 if rows.len() < 6 {
-                    let mut element = row_element.text().collect::<Vec<_>>().join(" ");
+                    let mut element: String = row_element.text().collect::<Vec<_>>().join(" ");
                     element = element.trim().replace("\n", " ");
 
                     if element.chars().all(char::is_numeric) {

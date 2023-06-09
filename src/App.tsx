@@ -40,7 +40,7 @@ const App = () => {
 
     const courseArr = courses
       .filter((el: Course) => {
-        return el.valid == true;
+        return el.valid;
       })
       .map((el: Course) => {
         return el.courseNum;
@@ -65,7 +65,7 @@ const App = () => {
           <input
             id="course-num-input"
             value={newCourse()}
-            onChange={(e) => setNewCourse(e.target.value as number)}
+            onChange={(e: any) => setNewCourse(e.target.value as number)}
             placeholder=""
             type="number"
             min={courseMIN}
@@ -83,7 +83,7 @@ const App = () => {
           <input
             id="gt-scheduler-input"
             value={gtScheduleCourses().join(", ")}
-            onChange={(e) => setGtScheduleCourses(e.target.value)}
+            onChange={(e: any) => setGtScheduleCourses(e.target.value)}
             placeholder=""
             type="txt"
           />
